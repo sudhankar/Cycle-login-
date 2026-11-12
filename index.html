@@ -2,21 +2,24 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cyclist Brings Login Form</title>
+<title>Animated Login Form</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#050914;color:#fff;overflow:hidden}
 body{background:radial-gradient(ellipse at 50% 80%,#102c57 0%,#071326 48%,#030711 100%)}
-.header{text-align:center;padding:18px 12px 0;font-size:clamp(27px,5vw,43px);font-weight:900;line-height:1.05;position:relative;z-index:3;text-shadow:0 0 20px #168bff}
-.header span{color:#38bdf8}
-.skip{position:fixed;right:13px;top:12px;z-index:20;border:0;border-radius:99px;padding:9px 15px;font-weight:800;background:#fff;color:#071326}
-.stage{position:relative;height:calc(100dvh - 112px);min-height:480px;overflow:hidden}
+.stage{position:relative;height:100dvh;min-height:480px;overflow:hidden}
 .floor{position:absolute;bottom:8%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#1c9bff,transparent);box-shadow:0 0 24px #168bff}
 .bubble{position:absolute;top:28px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:18px;background:#fff;color:#101827;font-weight:700;font-size:13px;opacity:0;z-index:8;white-space:nowrap;box-shadow:0 5px 25px #0008}
 .cyclist{position:absolute;width:clamp(210px,34vw,340px);height:auto;object-fit:contain;left:-420px;bottom:9%;filter:drop-shadow(0 10px 12px #0008);will-change:left}
 .towGroup{position:absolute;left:110%;bottom:9%;display:flex;align-items:center;gap:0;will-change:left}
-.towBike{width:clamp(190px,29vw,300px);height:auto;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 10px 12px #0008);flex-shrink:0}
-.rope{width:clamp(28px,5vw,58px);height:3px;background:repeating-linear-gradient(90deg,#fbbf24 0 7px,#a16207 7px 10px);box-shadow:0 0 7px #fbbf24;transform:rotate(-5deg);flex-shrink:0}
-.formWrap{width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:-5px;filter:drop-shadow(0 0 22px #0284c788)}
+.bikeUnit{position:relative;width:clamp(190px,29vw,300px);flex:0 0 auto;line-height:0}
+.towBike{display:block;width:100%;height:auto;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 10px 12px #0008)}
+/* गाँठ साइकिल के पीछे वाले हिस्से और form के कोने पर */
+.bikeUnit:after{content:"";position:absolute;right:5.5%;top:53%;width:13px;height:13px;border:3px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 7px #fbbf24;z-index:3}
+.rope{position:relative;width:clamp(35px,5vw,62px);height:4px;background:repeating-linear-gradient(90deg,#fbbf24 0 7px,#a16207 7px 10px);box-shadow:0 0 7px #fbbf24;transform:rotate(-5deg);flex:0 0 auto}
+.rope:before,.rope:after{content:"";position:absolute;top:-5px;width:10px;height:12px;border:2px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 5px #fbbf24}
+.rope:before{left:-4px}.rope:after{right:-4px}
+.formWrap{position:relative;width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:-5px;filter:drop-shadow(0 0 22px #0284c788)}
+.formWrap:before{content:"";position:absolute;left:-7px;top:53%;width:13px;height:13px;border:3px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 7px #fbbf24;z-index:4}
 .panel{border:2px solid #38bdf8;border-radius:22px;padding:8px;background:linear-gradient(145deg,#10213d,#071326);box-shadow:inset 0 0 22px #0284c733,0 0 24px #0284c766}
 .form{background:#0d1729;border-radius:15px;padding:clamp(15px,2.5vw,23px)}
 h2{text-align:center;margin:0 0 6px;font-size:24px}.sub{text-align:center;color:#9fb2ce;font-size:12px;margin:0 0 15px}
@@ -27,18 +30,16 @@ input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf833}
 .tgl{text-align:center;color:#aabbd0;font-size:12px;margin-top:13px;cursor:pointer}.tgl b{color:#38bdf8}
 .msg{text-align:center;font-size:12px;min-height:16px;margin:9px 0 0}
 .status{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-size:12px;color:#9ccfff;text-align:center;white-space:nowrap}
-@media(max-width:650px){.stage{height:calc(100dvh - 100px)}.towGroup{bottom:10%}.towBike{width:clamp(145px,36vw,210px)}.formWrap{width:clamp(230px,52vw,290px)}.rope{width:24px}.cyclist{width:235px}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
+@media(max-width:650px){.stage{height:100dvh}.towGroup{bottom:9%}.bikeUnit{width:clamp(145px,36vw,210px)}.formWrap{width:clamp(230px,52vw,290px)}.rope{width:25px}.cyclist{width:235px}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
 </style>
 </head>
 <body>
-<button class="skip" id="skip">Skip →</button>
-<div class="header">Login Form<br><span>Animation</span></div>
 <div class="stage" id="stage">
   <div class="bubble" id="bubble">Wait! I'm going to bring your login form 🚴</div>
   <img class="cyclist" id="cyclist" alt="Cyclist riding from left to right">
   <div class="towGroup" id="towGroup">
-    <img class="towBike" id="towBike" alt="Cyclist towing the login form">
-    <div class="rope"></div>
+    <div class="bikeUnit"><img class="towBike" id="towBike" alt="Cyclist towing the login form"></div>
+    <div class="rope" aria-hidden="true"></div>
     <div class="formWrap">
       <div class="panel"><form class="form" id="loginForm" novalidate>
         <h2 id="formTitle">Welcome Back</h2><p class="sub" id="sub">Please login to your account</p>
@@ -88,10 +89,12 @@ async function play(){
  group.style.left=(w+gw+30)+'px';
  say('Here comes your login form! 💪');statusEl.textContent='The cyclist is towing your form from the right…';
  animateFrames(towBike,true);
- await move(group,w+gw+30,(w-gw)/2,4800,token);
+ const form=group.querySelector('.formWrap');
+ const formCenterOffset=form.offsetLeft+form.offsetWidth/2;
+ const centeredGroupLeft=w/2-formCenterOffset;
+ await move(group,w+gw+30,centeredGroupLeft,4800,token);
  if(token!==runToken)return;stopFrames();towBike.src=frameUrls[0];hideSay();statusEl.textContent='Your login form has arrived. Please sign in.';
 }
-document.getElementById('skip').addEventListener('click',()=>{runToken++;stopFrames();cyclist.style.display='none';group.style.display='flex';group.style.left=((stage.clientWidth-group.getBoundingClientRect().width)/2)+'px';towBike.src=frameUrls[0];hideSay();statusEl.textContent='Your login form is ready.'});
 window.addEventListener('load',()=>setTimeout(play,350));
 let isLogin=true;
 document.getElementById('toggle').addEventListener('click',()=>{
