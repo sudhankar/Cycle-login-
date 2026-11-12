@@ -10,15 +10,16 @@ body{background:radial-gradient(ellipse at 50% 80%,#102c57 0%,#071326 48%,#03071
 .floor{position:absolute;bottom:8%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#1c9bff,transparent);box-shadow:0 0 24px #168bff}
 .bubble{position:absolute;top:28px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:18px;background:#fff;color:#101827;font-weight:700;font-size:13px;opacity:0;z-index:8;white-space:nowrap;box-shadow:0 5px 25px #0008}
 .cyclist{position:absolute;width:clamp(210px,34vw,340px);height:auto;object-fit:contain;left:-420px;bottom:9%;filter:drop-shadow(0 10px 12px #0008);will-change:left}
-.towGroup{position:absolute;left:110%;bottom:9%;display:flex;align-items:center;gap:0;will-change:left}
+.towGroup{position:absolute;left:110%;bottom:9%;display:flex;align-items:flex-end;gap:0;will-change:left}
 .bikeUnit{position:relative;width:clamp(190px,29vw,300px);flex:0 0 auto;line-height:0}
 .towBike{display:block;width:100%;height:auto;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 10px 12px #0008)}
 /* गाँठ साइकिल के पीछे वाले हिस्से और form के कोने पर */
-.bikeUnit:after{content:"";position:absolute;right:5.5%;top:53%;width:13px;height:13px;border:3px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 7px #fbbf24;z-index:3}
-.rope{position:relative;width:clamp(35px,5vw,62px);height:4px;background:repeating-linear-gradient(90deg,#fbbf24 0 7px,#a16207 7px 10px);box-shadow:0 0 7px #fbbf24;transform:rotate(-5deg);flex:0 0 auto}
-.rope:before,.rope:after{content:"";position:absolute;top:-5px;width:10px;height:12px;border:2px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 5px #fbbf24}
-.rope:before{left:-4px}.rope:after{right:-4px}
-.formWrap{position:relative;width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:-5px;filter:drop-shadow(0 0 22px #0284c788)}
+.bikeUnit:after{display:none}
+/* Rope is an overlay between the bike's rear frame and the form edge. It follows the form's height, not the bike's flex alignment. */
+.rope{position:absolute;z-index:5;left:calc(clamp(190px,29vw,300px) - 8px);right:calc(clamp(270px,36vw,350px) - 8px);top:0;bottom:0;width:auto;height:auto;pointer-events:none;flex:none;transform:none}
+.rope svg{display:block;width:100%;height:100%;overflow:visible}
+.formWrap:before{display:none}
+.formWrap{position:relative;width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:clamp(48px,7vw,82px);filter:drop-shadow(0 0 22px #0284c788)}
 .formWrap:before{content:"";position:absolute;left:-7px;top:53%;width:13px;height:13px;border:3px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 7px #fbbf24;z-index:4}
 .panel{border:2px solid #38bdf8;border-radius:22px;padding:8px;background:linear-gradient(145deg,#10213d,#071326);box-shadow:inset 0 0 22px #0284c733,0 0 24px #0284c766}
 .form{background:#0d1729;border-radius:15px;padding:clamp(15px,2.5vw,23px)}
@@ -30,7 +31,7 @@ input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf833}
 .tgl{text-align:center;color:#aabbd0;font-size:12px;margin-top:13px;cursor:pointer}.tgl b{color:#38bdf8}
 .msg{text-align:center;font-size:12px;min-height:16px;margin:9px 0 0}
 .status{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-size:12px;color:#9ccfff;text-align:center;white-space:nowrap}
-@media(max-width:650px){.stage{height:100dvh}.towGroup{bottom:9%}.bikeUnit{width:235px}.cyclist{width:235px}.formWrap{width:clamp(230px,52vw,290px)}.rope{width:76px;height:78px;margin-left:-28px;margin-right:-8px}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
+@media(max-width:650px){.stage{height:100dvh}.towGroup{bottom:9%;align-items:flex-end}.bikeUnit{width:235px}.cyclist{width:235px}.formWrap{width:clamp(230px,52vw,290px);margin-left:55px}.rope{left:227px;right:calc(clamp(230px,52vw,290px) - 8px)}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
 </style>
 </head>
 <body>
@@ -40,24 +41,15 @@ input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf833}
   <div class="towGroup" id="towGroup">
     <div class="bikeUnit"><img class="towBike" id="towBike" alt="Cyclist towing the login form"></div>
     <div class="rope" aria-hidden="true">
-      <svg viewBox="0 0 112 94" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="cord" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#f8d58a"/><stop offset=".48" stop-color="#c78a3d"/><stop offset="1" stop-color="#8b5428"/>
-          </linearGradient>
-        </defs>
-        <!-- small wrap around the bicycle rear frame -->
-        <path d="M7 26 C-1 17, 2 8, 12 10 C20 12, 18 22, 12 28 C7 34, 9 40, 19 43
-                 C39 50, 66 51, 91 62 C108 66, 110 75, 102 81 C95 87, 86 82, 91 75"
-              fill="none" stroke="#3b2418" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M7 26 C-1 17, 2 8, 12 10 C20 12, 18 22, 12 28 C7 34, 9 40, 19 43
-                 C39 50, 66 51, 91 62 C108 66, 110 75, 102 81 C95 87, 86 82, 91 75"
-              fill="none" stroke="url(#cord)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M7 26 C-1 17, 2 8, 12 10 C20 12, 18 22, 12 28 C7 34, 9 40, 19 43
-                 C39 50, 66 51, 91 62 C108 66, 110 75, 102 81 C95 87, 86 82, 91 75"
-              fill="none" stroke="#ffe6ad" stroke-width="1.1" stroke-dasharray="2 5" stroke-linecap="round"/>
-        <!-- tied loop at form end -->
-        <path d="M84 75 C75 66, 69 75, 77 81 C83 86, 91 82, 95 81" fill="none" stroke="#5a321d" stroke-width="3.2" stroke-linecap="round"/>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs><linearGradient id="cord" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c58b"/><stop offset=".5" stop-color="#b9854d"/><stop offset="1" stop-color="#76502f"/></linearGradient></defs>
+        <!-- One continuous, gently sagging tow rope: bike frame to form side -->
+        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="#241b16" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="url(#cord)" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="#f5dfb8" stroke-width=".45" stroke-dasharray="1.2 2.5" stroke-linecap="round"/>
+        <!-- compact real-looking wraps at both attachment points -->
+        <path d="M1 70 C-1 66 5 64 7 69 C9 73 4 78 1 75 M4 72 L8 76" fill="none" stroke="#9b6b3f" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M93 46 C97 43 101 47 98 51 C96 54 92 52 93 49 M96 49 L99 53" fill="none" stroke="#9b6b3f" stroke-width="1.6" stroke-linecap="round"/>
       </svg>
     </div>
     <div class="formWrap">
