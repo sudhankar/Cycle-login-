@@ -15,12 +15,12 @@ body{background:radial-gradient(ellipse at 50% 80%,#102c57 0%,#071326 48%,#03071
 .towBike{display:block;width:100%;height:auto;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 10px 12px #0008)}
 /* गाँठ साइकिल के पीछे वाले हिस्से और form के कोने पर */
 .bikeUnit:after{display:none}
-/* Rope is an overlay between the bike's rear frame and the form edge. It follows the form's height, not the bike's flex alignment. */
-.rope{position:absolute;z-index:5;left:calc(clamp(190px,29vw,300px) - 8px);right:calc(clamp(270px,36vw,350px) - 8px);top:0;bottom:0;width:auto;height:auto;pointer-events:none;flex:none;transform:none}
+/* One continuous tow-rope overlay. It is positioned from measured bike/form
+   coordinates so its first end sits ON the seat-post, not outside the WebP canvas. */
+.rope{position:absolute;z-index:4;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .rope svg{display:block;width:100%;height:100%;overflow:visible}
-.formWrap:before{display:none}
-.formWrap{position:relative;width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:clamp(48px,7vw,82px);filter:drop-shadow(0 0 22px #0284c788)}
-.formWrap:before{content:"";position:absolute;left:-7px;top:53%;width:13px;height:13px;border:3px solid #fbbf24;border-radius:50%;background:#8b5a16;box-shadow:0 0 7px #fbbf24;z-index:4}
+.formWrap{position:relative;z-index:5;width:clamp(270px,36vw,350px);flex-shrink:0;margin-left:clamp(48px,7vw,82px);filter:drop-shadow(0 0 22px #0284c788)}
+
 .panel{border:2px solid #38bdf8;border-radius:22px;padding:8px;background:linear-gradient(145deg,#10213d,#071326);box-shadow:inset 0 0 22px #0284c733,0 0 24px #0284c766}
 .form{background:#0d1729;border-radius:15px;padding:clamp(15px,2.5vw,23px)}
 h2{text-align:center;margin:0 0 6px;font-size:24px}.sub{text-align:center;color:#9fb2ce;font-size:12px;margin:0 0 15px}
@@ -31,7 +31,7 @@ input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf833}
 .tgl{text-align:center;color:#aabbd0;font-size:12px;margin-top:13px;cursor:pointer}.tgl b{color:#38bdf8}
 .msg{text-align:center;font-size:12px;min-height:16px;margin:9px 0 0}
 .status{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-size:12px;color:#9ccfff;text-align:center;white-space:nowrap}
-@media(max-width:650px){.stage{height:100dvh}.towGroup{bottom:9%;align-items:flex-end}.bikeUnit{width:235px}.cyclist{width:235px}.formWrap{width:clamp(230px,52vw,290px);margin-left:55px}.rope{left:227px;right:calc(clamp(230px,52vw,290px) - 8px)}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
+@media(max-width:650px){.stage{height:100dvh}.towGroup{bottom:9%;align-items:flex-end}.bikeUnit{width:235px}.cyclist{width:235px}.formWrap{width:clamp(230px,52vw,290px);margin-left:55px}.bubble{top:15px;max-width:92%;white-space:normal;text-align:center}}
 </style>
 </head>
 <body>
@@ -40,16 +40,16 @@ input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px #38bdf833}
   <img class="cyclist" id="cyclist" alt="Cyclist riding from left to right">
   <div class="towGroup" id="towGroup">
     <div class="bikeUnit"><img class="towBike" id="towBike" alt="Cyclist towing the login form"></div>
-    <div class="rope" aria-hidden="true">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs><linearGradient id="cord" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c58b"/><stop offset=".5" stop-color="#b9854d"/><stop offset="1" stop-color="#76502f"/></linearGradient></defs>
-        <!-- One continuous, gently sagging tow rope: bike frame to form side -->
-        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="#241b16" stroke-width="2.8" stroke-linecap="round"/>
-        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="url(#cord)" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M2 75 C22 78 28 72 43 67 S76 50 98 50" fill="none" stroke="#f5dfb8" stroke-width=".45" stroke-dasharray="1.2 2.5" stroke-linecap="round"/>
-        <!-- compact real-looking wraps at both attachment points -->
-        <path d="M1 70 C-1 66 5 64 7 69 C9 73 4 78 1 75 M4 72 L8 76" fill="none" stroke="#9b6b3f" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M93 46 C97 43 101 47 98 51 C96 54 92 52 93 49 M96 49 L99 53" fill="none" stroke="#9b6b3f" stroke-width="1.6" stroke-linecap="round"/>
+    <div class="rope" id="towRope" aria-hidden="true">
+      <svg id="ropeSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="cord" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0d3a0"/><stop offset=".48" stop-color="#b9854d"/><stop offset="1" stop-color="#70472a"/></linearGradient>
+        </defs>
+        <path id="ropeShadow" fill="none" stroke="#21170f" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="ropeLine" fill="none" stroke="url(#cord)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="ropeStitch" fill="none" stroke="#f7e2bd" stroke-width=".65" stroke-dasharray="2 4" stroke-linecap="round"/>
+        <path id="bikeKnot" fill="none" stroke="#8c5b35" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="formKnot" fill="none" stroke="#8c5b35" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <div class="formWrap">
@@ -79,6 +79,31 @@ function animateFrames(img,flip=false){
   frameTimer=setInterval(()=>{frame=(frame+1)%frameCount;img.src=frameUrls[frame]},45);
 }
 function stopFrames(){clearInterval(frameTimer)}
+// Measure the visible cyclist canvas and form edge. The WebP has transparent
+// padding, so the rope deliberately enters the bike canvas and is layered over it.
+function updateRope(){
+ const bike=document.querySelector('.bikeUnit'), form=document.querySelector('.formWrap');
+ const svg=document.getElementById('ropeSvg');
+ if(!bike||!form||!svg||!group.offsetWidth)return;
+ const gw=group.clientWidth, gh=group.clientHeight, bw=bike.clientWidth, bh=bike.clientHeight;
+ svg.setAttribute('viewBox',`0 0 ${gw} ${gh}`);
+ // The bike is mirrored on the return trip. Its seat/seat-post is around 63% of
+ // the mirrored image width and 67% down from the top. Start 18px inside canvas.
+ const sx=bike.offsetLeft+bw*.63-12;
+ const sy=gh-bh+bh*.675;
+ // End the rope slightly underneath the form's left border; form layer masks it.
+ const ex=form.offsetLeft+8;
+ const ey=form.offsetTop+form.offsetHeight*.70;
+ const dx=Math.max(30,ex-sx);
+ const sag=Math.min(28,Math.max(10,dx*.10));
+ const d=`M ${sx} ${sy} C ${sx+dx*.28} ${sy+sag}, ${sx+dx*.62} ${ey+sag}, ${ex} ${ey}`;
+ ['ropeShadow','ropeLine','ropeStitch'].forEach(id=>document.getElementById(id).setAttribute('d',d));
+ // A compact two-wrap hitch around the seat-post, kept inside the cyclist canvas.
+ const knot=`M ${sx-9} ${sy-8} C ${sx-18} ${sy-17}, ${sx-22} ${sy-2}, ${sx-10} ${sy+2} C ${sx+1} ${sy+6}, ${sx+4} ${sy-9}, ${sx-5} ${sy-12} M ${sx-9} ${sy-4} C ${sx-2} ${sy+5}, ${sx+5} ${sy+7}, ${sx+9} ${sy+1}`;
+ document.getElementById('bikeKnot').setAttribute('d',knot);
+ const fk=`M ${ex-2} ${ey-8} C ${ex-13} ${ey-14}, ${ex-15} ${ey+1}, ${ex-3} ${ey+3} C ${ex+5} ${ey+4}, ${ex+6} ${ey-5}, ${ex-1} ${ey-7}`;
+ document.getElementById('formKnot').setAttribute('d',fk);
+}
 function say(t){bubble.textContent=t;bubble.style.opacity=1}
 function hideSay(){bubble.style.opacity=0}
 function wait(ms){return new Promise(r=>setTimeout(r,ms))}
@@ -97,7 +122,7 @@ async function play(){
  animateFrames(cyclist,false);
  await move(cyclist,-cw-30,w+30,4400,token);
  if(token!==runToken)return;cyclist.style.display='none';stopFrames();hideSay();await wait(450);
- group.style.display='flex';const gw=group.getBoundingClientRect().width;
+ group.style.display='flex';const gw=group.getBoundingClientRect().width;updateRope();
  group.style.left=(w+gw+30)+'px';
  say('Here comes your login form! 💪');statusEl.textContent='The cyclist is towing your form from the right…';
  animateFrames(towBike,true);
@@ -109,6 +134,7 @@ async function play(){
  if(token!==runToken)return;stopFrames();towBike.src=frameUrls[0];hideSay();statusEl.textContent='Your login form has arrived. Please sign in.';
 }
 window.addEventListener('load',()=>setTimeout(play,350));
+window.addEventListener('resize',()=>{if(group.style.display==='flex')requestAnimationFrame(updateRope)});
 let isLogin=true;
 document.getElementById('toggle').addEventListener('click',()=>{
  isLogin=!isLogin;document.getElementById('nameField').hidden=isLogin;
